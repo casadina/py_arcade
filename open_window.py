@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""01_open_window.py - Opening a window in Arcade"""
+"""open_window.py - Opening a window in Arcade"""
 import arcade
 
 # Constraints

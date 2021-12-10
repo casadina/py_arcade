@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""04_user_control.py - Learning about user control."""
+"""user_control.py - Learning about user control."""
 import arcade
 from arcade import key
 

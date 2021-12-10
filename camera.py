@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""06_camera.py - Adding a camera for bigger levels."""
+"""camera.py - Adding a camera for bigger levels."""
 import arcade
 from arcade import key
 

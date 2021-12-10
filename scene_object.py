@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
-"""02_draw_sprites.py - Opening a window in Arcade"""
+"""scene_object.py - Using Scene to control objects."""
 import arcade
-from random import randrange
 
 # Constraints
 SCREEN_WIDTH = 1000
@@ -21,18 +20,21 @@ class MyGame(arcade.Window):
         """Call the parent class and set up the window."""
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # Sprite lists
-        self.wall_list = None
-        self.player_list = None
-
+        # Initialize Scene and player
+        self.scene = None
         self.player_sprite = None
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
     def setup(self):
         """Set-up the game here. Call this function to restart the game."""
-        self.player_list = arcade.SpriteList()
-        self.wall_list = arcade.SpriteList(use_spatial_hash=True)
+
+        # Initialize Scene
+        self.scene = arcade.Scene()
+
+        # Create sprite lists
+        self.scene.add_sprite_list("Player")
+        self.scene.add_sprite_list("Walls", use_spatial_hash=True)
 
         # Player setup
         image_source = ":resources:images" \
@@ -41,38 +43,35 @@ class MyGame(arcade.Window):
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 128
-        self.player_list.append(self.player_sprite)
+        self.scene.add_sprite("Player", self.player_sprite)
 
         # Create the ground
         for x in range(0, 1250, 64):
             wall = arcade.Sprite(
-                ":resources:images/tiles/grassMid.png",
-                TILE_SCALING
+                ":resources:images/tiles/grassMid.png", TILE_SCALING
             )
             wall.center_x = x
             wall.center_y = 32
-            self.wall_list.append(wall)
+            self.scene.add_sprite("Walls", wall)
 
         # coordinates [x, y] used for crates
-        random_x = [[randrange(64 * 2, 1000 - 64, 64), 96] for _ in range(4)]
-        # coordinate_list = [[512, 96], [256, 96], [768, 96]]
+        coordinate_list = [[512, 96], [256, 96], [768, 96]]
 
-        for coordinate in random_x:
+        for coordinate in coordinate_list:
             # Add a crate to the ground.
             wall = arcade.Sprite(
-                ":resources:images/tiles/boxCrate_double.png",
-                TILE_SCALING
+                ":resources:images/tiles/boxCrate_double.png", TILE_SCALING
             )
             wall.position = coordinate
-            self.wall_list.append(wall)
+            self.scene.add_sprite("Walls", wall)
 
     def on_draw(self):
         """Render the screen."""
         # Clears screen to the background color
         arcade.start_render()
 
-        self.wall_list.draw()
-        self.player_list.draw()
+        # Draw scene
+        self.scene.draw()
 
 
 def main():
