@@ -109,29 +109,45 @@ class MyGame(arcade.Window):
     def on_key_press(self, button: int, modifiers: int):
         """Called whenever a key is pressed."""
         if button == key.UP or button == key.W:
-            self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+            self.up_pressed = True
         elif button == key.DOWN or button == key.S:
-            self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+            self.down_pressed = True
         elif button == key.LEFT or button == key.A:
-            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+            self.left_pressed = True
         elif button == key.RIGHT or button == key.D:
-            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+            self.right_pressed = True
 
     def on_key_release(self, button: int, modifiers: int):
         """Called when the user releases a key."""
         if button == key.UP or button == key.W:
-            self.player_sprite.change_y = 0
+            self.up_pressed = False
         elif button == key.DOWN or button == key.S:
-            self.player_sprite.change_y = 0
+            self.down_pressed = False
         elif button == key.LEFT or button == key.A:
-            self.player_sprite.change_x = 0
+            self.left_pressed = False
         elif button == key.RIGHT or button == key.D:
+            self.right_pressed = False
+
+    def update_player_velocity(self):
+        """Update velocity based on key state."""
+        if self.up_pressed and not self.down_pressed:
+            self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+        elif self.down_pressed and not self.up_pressed:
+            self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+        else:
+            self.player_sprite.change_y = 0
+        if self.left_pressed and not self.right_pressed:
+            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+        elif self.right_pressed and not self.left_pressed:
+            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+        else:
             self.player_sprite.change_x = 0
 
     def on_update(self, delta_time: float):
         """Movement and game logic."""
-
         # Move the player with the physics engine
+        self.update_player_velocity()
+        self.player_sprite.update()
         self.physics_engine.update()
 
 
