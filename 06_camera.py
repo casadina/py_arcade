@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""02_draw_sprites.py - Using physics engines for gravity."""
+"""06_camera.py - Adding a camera for bigger levels."""
 import arcade
 from arcade import key
 
@@ -25,13 +25,6 @@ class Player(arcade.Sprite):
         # Check for out of bounds
         if self.left < 0:
             self.left = 0
-        elif self.right > SCREEN_WIDTH - 1:
-            self.right = SCREEN_WIDTH - 1
-
-        if self.bottom < 0:
-            self.bottom = 0
-        elif self.top > SCREEN_HEIGHT - 1:
-            self.top = SCREEN_HEIGHT - 1
 
 
 class MyGame(arcade.Window):
@@ -52,6 +45,9 @@ class MyGame(arcade.Window):
         # Track current state of key press
         self.left_pressed = False
         self.right_pressed = False
+
+        # A camera that can be used for scrolling the screen
+        self.camera = None
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
@@ -99,10 +95,16 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Walls"]
         )
 
+        # Setup the Camera
+        self.camera = arcade.Camera(self.width, self.height)
+
     def on_draw(self):
         """Render the screen."""
         # Clears screen to the background color
         arcade.start_render()
+
+        # Activate our Camera
+        self.camera.use()
 
         # Draw scene
         self.scene.draw()
@@ -133,12 +135,30 @@ class MyGame(arcade.Window):
         else:
             self.player_sprite.change_x = 0
 
+    def center_camera_to_player(self):
+        screen_center_x = self.player_sprite.center_x - (
+                self.camera.viewport_width / 2)
+        screen_center_y = self.player_sprite.center_y - (
+                self.camera.viewport_height / 2)
+
+        # Don't let camera travel past 0
+        if screen_center_x < 0:
+            screen_center_x = 0
+        if screen_center_y < 0:
+            screen_center_y = 0
+        player_centered = screen_center_x, screen_center_y
+
+        self.camera.move_to(player_centered)
+
     def on_update(self, delta_time: float):
         """Movement and game logic."""
         # Move the player with the physics engine
         self.update_player_velocity()
         self.player_sprite.update()
         self.physics_engine.update()
+
+        # Position the camera
+        self.center_camera_to_player()
 
 
 def main():

@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""02_draw_sprites.py - Opening a window in Arcade"""
+"""03_scene_object.py - Using Scene to control objects."""
 import arcade
 
 # Constraints

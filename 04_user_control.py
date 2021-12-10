@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""02_draw_sprites.py - Opening a window in Arcade"""
+"""04_user_control.py - Learning about user control."""
 import arcade
 from arcade import key
 
