@@ -21,10 +21,8 @@ class MyGame(arcade.Window):
         """Call the parent class and set up the window."""
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # Sprite lists
-        self.wall_list = None
-        self.player_list = None
-
+        # Initialize Scene and player
+        self.scene = None
         self.player_sprite = None
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
