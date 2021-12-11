@@ -95,11 +95,7 @@ class PhysicsEngine(arcade.PhysicsEnginePlatformer):
                     len(left_hit_list) > 0,
                     len(right_hit_list) > 0)
 
-        if True in possible:
-            print(possible)
-            return True
-        else:
-            return False
+        return True in possible
 
 
 class FPSCounter:
@@ -171,6 +167,7 @@ class Player(arcade.Sprite):
             self.character_face_direction = LEFT_FACING
         elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
             self.character_face_direction = RIGHT_FACING
+        return True
 
     def show_climbing(self):
         """Shows climbing animation"""
@@ -185,8 +182,6 @@ class Player(arcade.Sprite):
         if self.climbing:
             self.texture = self.climbing_textures[self.cur_texture // 4]
             return True
-        else:
-            return False
 
     def show_jumping(self):
         """Shows jumping animation."""
@@ -212,19 +207,16 @@ class Player(arcade.Sprite):
 
     def update_animation(self, delta_time: float = 1 / 60):
         """Updates the player animation."""
-        print(self.climbing)
-        # Check for out of bounds
-        self.left = max(self.left, 0)
+        self.left = max(self.left, 0) # Check for out of bounds on the left
 
         self.show_direction()
         if self.show_climbing():
             return
-        elif self.show_jumping():
+        if self.show_jumping():
             return
-        elif self.show_idle():
+        if self.show_idle():
             return
-        else:
-            self.show_walking()
+        self.show_walking()
 
 
 class MyGame(arcade.Window):
@@ -290,7 +282,7 @@ class MyGame(arcade.Window):
         self.gui_camera = arcade.Camera(self.width, self.height)
 
         # Name of map file to load
-        map_name = f":resources:tiled_maps/map_with_ladders.json"
+        map_name = ":resources:tiled_maps/map_with_ladders.json"
 
         # Layer specific options are defined on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -416,6 +408,7 @@ class MyGame(arcade.Window):
         elif button in self.down:
             if self.physics_engine.is_on_ladder():
                 self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+                self.player_sprite.is_on_ladder = True
         elif button in self.left:
             self.left_pressed = True
         elif button in self.right:
@@ -449,10 +442,8 @@ class MyGame(arcade.Window):
                 self.camera.viewport_height / 2)
 
         # Don't let camera travel past 0
-        if screen_center_x < 0:
-            screen_center_x = 0
-        if screen_center_y < 0:
-            screen_center_y = 0
+        screen_center_x = max(screen_center_x, 0)
+        screen_center_y = max(screen_center_y, 0)
         player_centered = screen_center_x, screen_center_y
 
         self.camera.move_to(player_centered, 0.2)
